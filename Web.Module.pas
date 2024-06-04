@@ -210,7 +210,7 @@ begin
   begin
     CurrentDate := Now;
     RecyclerIsRunning := True;
-    
+
     for Server in ServerList do
     begin
       for Video in Server.VideoList do
@@ -222,9 +222,9 @@ begin
         end;
       end;
     end;
-          
+
     RecyclerIsRunning := False;
-    Response.StatusCode := 204; 
+    Response.StatusCode := 204;
   end
   else
   begin
