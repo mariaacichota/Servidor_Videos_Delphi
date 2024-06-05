@@ -9,15 +9,15 @@ type
   TVideo = class
   private
     FID: TGUID;
-    FDescription: string;
+    FDescription: String;
     FContent: TBytes;
-    FDataInclusao: TDate;
+    FDataInclusao: String;
 
   public
     property ID: TGUID read FID write FID;
-    property Description: string read FDescription write FDescription;
+    property Description: String read FDescription write FDescription;
     property Content: TBytes read FContent write FContent;
-    property DataInclusao: TDate read FDataInclusao write FDataInclusao;
+    property DataInclusao: String read FDataInclusao write FDataInclusao;
   end;
 
 implementation

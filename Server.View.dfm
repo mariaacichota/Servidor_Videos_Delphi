@@ -1,9 +1,9 @@
-object Form1: TForm1
+object frmPrincipalServer: TfrmPrincipalServer
   Left = 271
   Top = 114
-  Caption = 'Form1'
-  ClientHeight = 271
-  ClientWidth = 546
+  Caption = 'Servidor de Videomonitoramento'
+  ClientHeight = 348
+  ClientWidth = 1019
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,72 +12,215 @@ object Form1: TForm1
   Font.Style = []
   OnCreate = FormCreate
   TextHeight = 13
-  object Label1: TLabel
-    Left = 16
-    Top = 168
-    Width = 20
-    Height = 13
-    Caption = 'Port'
-  end
-  object ButtonStart: TButton
-    Left = 16
-    Top = 128
-    Width = 75
-    Height = 25
-    Caption = 'Start'
+  object pnlGeral: TPanel
+    Left = 0
+    Top = 0
+    Width = 1019
+    Height = 348
+    Align = alClient
     TabOrder = 0
-    OnClick = ButtonStartClick
-  end
-  object ButtonStop: TButton
-    Left = 97
-    Top = 128
-    Width = 75
-    Height = 25
-    Caption = 'Stop'
-    TabOrder = 1
-    OnClick = ButtonStopClick
-  end
-  object EditPort: TEdit
-    Left = 16
-    Top = 187
-    Width = 121
-    Height = 21
-    TabOrder = 2
-    Text = '8080'
-  end
-  object ButtonOpenBrowser: TButton
-    Left = 16
-    Top = 232
-    Width = 107
-    Height = 25
-    Caption = 'Open Browser'
-    TabOrder = 3
-    OnClick = ButtonOpenBrowserClick
-  end
-  object Button1: TButton
-    Left = 224
-    Top = 16
-    Width = 107
-    Height = 25
-    Caption = 'Open Browser'
-    TabOrder = 4
-    OnClick = Button1Click
-  end
-  object Edit1: TEdit
-    Left = 16
-    Top = 18
-    Width = 202
-    Height = 21
-    TabOrder = 5
-    Text = '8080'
+    ExplicitLeft = 504
+    ExplicitTop = 280
+    ExplicitWidth = 185
+    ExplicitHeight = 41
+    object Splitter1: TSplitter
+      AlignWithMargins = True
+      Left = 4
+      Top = 140
+      Width = 1011
+      Height = 16
+      Cursor = crVSplit
+      Align = alTop
+      ExplicitLeft = 2
+      ExplicitTop = 131
+      ExplicitWidth = 1017
+    end
+    object pnlStartStopServer: TPanel
+      Left = 1
+      Top = 1
+      Width = 1017
+      Height = 136
+      Align = alTop
+      TabOrder = 0
+      object lblPort: TLabel
+        Left = 16
+        Top = 48
+        Width = 20
+        Height = 13
+        Caption = 'Port'
+      end
+      object EditPort: TEdit
+        Left = 16
+        Top = 67
+        Width = 156
+        Height = 21
+        TabOrder = 0
+        Text = '8080'
+      end
+      object ButtonOpenBrowser: TButton
+        Left = 16
+        Top = 17
+        Width = 156
+        Height = 25
+        Caption = 'Open Browser'
+        TabOrder = 1
+        OnClick = ButtonOpenBrowserClick
+      end
+      object ButtonStart: TButton
+        Left = 16
+        Top = 94
+        Width = 75
+        Height = 25
+        Caption = 'Start'
+        TabOrder = 2
+        OnClick = ButtonStartClick
+      end
+      object ButtonStop: TButton
+        Left = 97
+        Top = 94
+        Width = 75
+        Height = 25
+        Caption = 'Stop'
+        TabOrder = 3
+        OnClick = ButtonStopClick
+      end
+    end
+    object pnlCreateGeral: TPanel
+      Left = 1
+      Top = 159
+      Width = 1017
+      Height = 188
+      Align = alClient
+      TabOrder = 1
+      ExplicitLeft = 304
+      ExplicitTop = 304
+      ExplicitWidth = 185
+      ExplicitHeight = 41
+      object pnlCreateServer: TPanel
+        Left = 1
+        Top = 1
+        Width = 503
+        Height = 186
+        Align = alClient
+        TabOrder = 0
+        ExplicitWidth = 576
+        ExplicitHeight = 328
+        object lblIpAddressServidor: TLabel
+          Left = 14
+          Top = 83
+          Width = 56
+          Height = 13
+          Caption = 'IP Address:'
+        end
+        object Label2: TLabel
+          Left = 14
+          Top = 21
+          Width = 89
+          Height = 13
+          Caption = 'Nome do Servidor:'
+        end
+        object Label1: TLabel
+          Left = 260
+          Top = 83
+          Width = 37
+          Height = 13
+          Caption = 'IP Port:'
+        end
+        object btnCriarServidor: TButton
+          Left = 341
+          Top = 140
+          Width = 144
+          Height = 25
+          Caption = 'Criar Servidor'
+          TabOrder = 0
+          OnClick = btnIncluirVideoClick
+        end
+        object edtIpPortServidor: TEdit
+          Left = 260
+          Top = 102
+          Width = 225
+          Height = 21
+          TabOrder = 1
+        end
+        object edtNomeServidor: TEdit
+          Left = 12
+          Top = 40
+          Width = 473
+          Height = 21
+          TabOrder = 2
+        end
+        object edtIpAddressServidor: TEdit
+          Left = 14
+          Top = 102
+          Width = 225
+          Height = 21
+          TabOrder = 3
+        end
+      end
+      object pnlCreateVideo: TPanel
+        Left = 504
+        Top = 1
+        Width = 512
+        Height = 186
+        Align = alRight
+        TabOrder = 1
+        ExplicitHeight = 328
+        object lblTituloVideo: TLabel
+          Left = 24
+          Top = 21
+          Width = 74
+          Height = 13
+          Caption = 'T'#237'tulo do V'#237'deo:'
+        end
+        object lblServidorVideo: TLabel
+          Left = 24
+          Top = 83
+          Width = 109
+          Height = 13
+          Caption = 'Servidor a ser inclu'#237'do:'
+        end
+        object btnIncluirVideo: TButton
+          Left = 352
+          Top = 140
+          Width = 144
+          Height = 25
+          Caption = 'Incluir V'#237'deo'
+          TabOrder = 0
+          OnClick = btnIncluirVideoClick
+        end
+        object cbServers: TComboBox
+          Left = 25
+          Top = 102
+          Width = 224
+          Height = 21
+          TabOrder = 1
+          OnChange = cbServersChange
+          OnEnter = cbServersEnter
+        end
+        object edtGUIDServer: TEdit
+          Left = 272
+          Top = 102
+          Width = 225
+          Height = 21
+          TabOrder = 2
+        end
+        object edtTituloVideo: TEdit
+          Left = 24
+          Top = 40
+          Width = 473
+          Height = 21
+          TabOrder = 3
+        end
+      end
+    end
   end
   object ApplicationEvents1: TApplicationEvents
     OnIdle = ApplicationEvents1Idle
-    Left = 288
-    Top = 24
+    Left = 320
+    Top = 432
   end
   object OpenDialog1: TOpenDialog
-    Left = 168
-    Top = 128
+    Left = 232
+    Top = 424
   end
 end

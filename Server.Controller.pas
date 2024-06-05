@@ -2,9 +2,9 @@ unit Server.Controller;
 
 interface
 
-uses System.SysUtils, System.Classes, System.StrUtils, Vcl.Dialogs, Datasnap.DSServer, Datasnap.DSAuth,
+uses System.Classes, System.StrUtils, Vcl.Dialogs, Datasnap.DSServer, Datasnap.DSAuth,
      IPPeerServer, Datasnap.DSCommonServer, IdTCPClient, REST.Json, System.JSON,
-     Server.Model, Videos.Model, System.NetEncoding;
+     Server.Model, Videos.Model, System.NetEncoding, Vcl.StdCtrls, System.Net.HttpClient;
 
 type
 {$METHODINFO ON}
@@ -12,6 +12,7 @@ type
 
   public
     class function CreateServer(AName, AIPAddress: string; AIPPort: Integer): TJSONObject;
+    class function CreateVideo(Server: TServer; Description, Content: String; InclusionDate: TDateTime): TJSONObject;
     class function UpdateServer(AID: TGUID; AName, AIPAddress: string; AIPPort: Integer): TJSONObject;
     class function DeleteServer(AID: TGUID): Boolean;
     class function DeleteVideo(ServerID, VideoID: TGUID): Boolean;
@@ -21,9 +22,10 @@ type
     class function GetAllServers: TJSONArray;
     class function GetAllVideos: TJSONArray;
     class function DownloadBinaryVideo(Video: TVideo): TStream;
-    class function AddVideo(ServerID: TGUID; Description, Content: String; InclusionDate: TDateTime): TJSONObject;
+    class procedure LoadServersToComboBox(ComboBox: TComboBox);  //
 
     class function FindServerByID(AID: TGUID): TServer;
+    class function FindServerByName(ServerName: String): TServer;      //
     class function FindVideoByIDs(ServerID, VideoID: TGUID): TVideo;
   end;
 {$METHODINFO OFF}
@@ -31,36 +33,9 @@ type
 implementation
 
 uses
-  System.Generics.Collections;
+  System.Generics.Collections, System.SysUtils;
 
 { TServerController }
-
-class function TServerController.AddVideo(ServerID: TGUID; Description,
-  Content: String; InclusionDate: TDateTime): TJSONObject;
-var
-  Server: TServer;
-  Video: TVideo;
-begin
-  Server := FindServerByID(ServerID);
-  if not Assigned(Server) then
-    raise Exception.Create('Server not found');
-
-  if not Assigned(Server.VideoList) then
-    Server.VideoList := TObjectList<TVideo>.Create;
-
-  Video := TVideo.Create;
-  try
-    Video.ID := TGUID.NewGuid;
-    Video.Description := Description;
-    Video.Content := TNetEncoding.Base64.DecodeStringToBytes(Content);
-    Video.DataInclusao := InclusionDate;
-    Server.VideoList.Add(Video);
-    Result := TJson.ObjectToJsonObject(Video);
-  except
-    Video.Free;
-    raise;
-  end;
-end;
 
 class function TServerController.CheckServerAvailability(AID: TGUID): Boolean;
 var
@@ -112,6 +87,28 @@ begin
   end;
 end;
 
+class function TServerController.CreateVideo(Server: TServer; Description,
+  Content: String; InclusionDate: TDateTime): TJSONObject;
+var
+  Video: TVideo;
+begin
+  if not Assigned(Server.VideoList) then
+    Server.VideoList := TObjectList<TVideo>.Create;
+
+  Video := TVideo.Create;
+  try
+    Video.ID := TGUID.NewGuid;
+    Video.Description := Description;
+    Video.Content := TNetEncoding.Base64.DecodeStringToBytes(Content);
+    Video.DataInclusao := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss', InclusionDate);
+    Server.VideoList.Add(Video);
+    Result := TJson.ObjectToJsonObject(Video);
+  except
+    Video.Free;
+    raise;
+  end;
+end;
+
 class function TServerController.DeleteServer(AID: TGUID): Boolean;
 var
   Servidor: TServer;
@@ -143,7 +140,6 @@ begin
         if Video.ID = VideoID then
         begin
           Servidor.VideoList.Remove(Video);
-          Video.Free;
           Result := True;
         end;
       end;
@@ -176,6 +172,22 @@ begin
   for Servidor in ServerList do
   begin
     if Servidor.ID = AID then
+    begin
+      Result := Servidor;
+      Exit;
+    end;
+  end;
+end;
+
+class function TServerController.FindServerByName(ServerName: String): TServer;
+var
+  Servidor: TServer;
+begin
+  Result := nil;
+
+  for Servidor in ServerList do
+  begin
+    if Servidor.Name = ServerName then
     begin
       Result := Servidor;
       Exit;
@@ -278,6 +290,37 @@ begin
   Result := nil;
 end;
 
+
+class procedure TServerController.LoadServersToComboBox(ComboBox: TComboBox);
+var
+  HttpClient: THttpClient;
+  Response: IHTTPResponse;
+  JSONValue: TJSONValue;
+  JSONArray: TJSONArray;
+  i: Integer;
+begin
+  HttpClient := THttpClient.Create;
+  try
+    Response := HttpClient.Get('http://localhost:8080/api/servers');
+    if Response.StatusCode = 200 then
+    begin
+      JSONValue := TJSONObject.ParseJSONValue(Response.ContentAsString);
+      try
+        JSONArray := JSONValue as TJSONArray;
+        for i := 0 to JSONArray.Count - 1 do
+        begin
+          ComboBox.Items.Add(JSONArray.Items[i].GetValue<string>('name'));
+        end;
+      finally
+        JSONValue.Free;
+      end;
+    end
+    else
+      ShowMessage('Failed to load servers. Status code: ' + Response.StatusCode.ToString);
+  finally
+    HttpClient.Free;
+  end;
+end;
 
 class function TServerController.UpdateServer(AID: TGUID; AName, AIPAddress: string;
   AIPPort: Integer): TJSONObject;
