@@ -1,0 +1,21 @@
+unit Server.Testes;
+
+interface
+
+uses
+  DUnitX.TestFramework;
+
+type
+  [TestFixture]
+  TServidorDelphiTestes = class
+  public
+    [Test]
+    procedure TestFindServerByID;
+  end;
+
+implementation
+
+initialization
+  TDUnitX.RegisterTestFixture(TServidorDelphiTestes);
+
+end.

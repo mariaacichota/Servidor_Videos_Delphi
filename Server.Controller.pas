@@ -22,10 +22,8 @@ type
     class function GetAllServers: TJSONArray;
     class function GetAllVideos: TJSONArray;
     class function DownloadBinaryVideo(Video: TVideo): TStream;
-    class procedure LoadServersToComboBox(ComboBox: TComboBox);  //
 
     class function FindServerByID(AID: TGUID): TServer;
-    class function FindServerByName(ServerName: String): TServer;      //
     class function FindVideoByIDs(ServerID, VideoID: TGUID): TVideo;
   end;
 {$METHODINFO OFF}
@@ -189,22 +187,6 @@ begin
   end;
 end;
 
-class function TServerController.FindServerByName(ServerName: String): TServer;
-var
-  Servidor: TServer;
-begin
-  Result := nil;
-
-  for Servidor in ServerList do
-  begin
-    if Servidor.Name = ServerName then
-    begin
-      Result := Servidor;
-      Exit;
-    end;
-  end;
-end;
-
 class function TServerController.FindVideoByIDs(ServerID,
   VideoID: TGUID): TVideo;
 var
@@ -298,38 +280,6 @@ begin
     end;
   end;
   Result := nil;
-end;
-
-
-class procedure TServerController.LoadServersToComboBox(ComboBox: TComboBox);
-var
-  HttpClient: THttpClient;
-  Response: IHTTPResponse;
-  JSONValue: TJSONValue;
-  JSONArray: TJSONArray;
-  i: Integer;
-begin
-  HttpClient := THttpClient.Create;
-  try
-    Response := HttpClient.Get('http://localhost:8080/api/servers');
-    if Response.StatusCode = 200 then
-    begin
-      JSONValue := TJSONObject.ParseJSONValue(Response.ContentAsString);
-      try
-        JSONArray := JSONValue as TJSONArray;
-        for i := 0 to JSONArray.Count - 1 do
-        begin
-          ComboBox.Items.Add(JSONArray.Items[i].GetValue<string>('name'));
-        end;
-      finally
-        JSONValue.Free;
-      end;
-    end
-    else
-      ShowMessage('Failed to load servers. Status code: ' + Response.StatusCode.ToString);
-  finally
-    HttpClient.Free;
-  end;
 end;
 
 class function TServerController.UpdateServer(AID: TGUID; AName, AIPAddress: string;

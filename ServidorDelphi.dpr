@@ -10,7 +10,8 @@ uses
   Server.Container in 'Server.Container.pas' {ServerContainer: TDataModule},
   Web.Module in 'Web.Module.pas' {WebModule1: TWebModule},
   Server.Model in 'Server.Model.pas',
-  Videos.Model in 'Videos.Model.pas';
+  Videos.Model in 'Videos.Model.pas',
+  Server.Testes in 'Server.Testes.pas';
 
 {$R *.res}
 

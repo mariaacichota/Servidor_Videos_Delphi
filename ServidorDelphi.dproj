@@ -117,6 +117,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         </DCCReference>
         <DCCReference Include="Server.Model.pas"/>
         <DCCReference Include="Videos.Model.pas"/>
+        <DCCReference Include="Server.Testes.pas"/>
         <None Include="js\base64.js"/>
         <None Include="js\serverfunctionexecutor.js"/>
         <None Include="js\json2.js"/>

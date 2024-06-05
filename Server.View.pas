@@ -16,26 +16,8 @@ type
     lblPort: TLabel;
     ApplicationEvents1: TApplicationEvents;
     ButtonOpenBrowser: TButton;
-    btnIncluirVideo: TButton;
     OpenDialog1: TOpenDialog;
     pnlGeral: TPanel;
-    cbServers: TComboBox;
-    pnlStartStopServer: TPanel;
-    pnlCreateGeral: TPanel;
-    Splitter1: TSplitter;
-    edtTituloVideo: TEdit;
-    edtGUIDServer: TEdit;
-    pnlCreateServer: TPanel;
-    pnlCreateVideo: TPanel;
-    lblTituloVideo: TLabel;
-    lblServidorVideo: TLabel;
-    btnCriarServidor: TButton;
-    edtIpPortServidor: TEdit;
-    lblIpAddressServidor: TLabel;
-    edtNomeServidor: TEdit;
-    Label2: TLabel;
-    edtIpAddressServidor: TEdit;
-    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure ButtonStartClick(Sender: TObject);
@@ -43,13 +25,9 @@ type
     procedure ButtonOpenBrowserClick(Sender: TObject);
     function VideoToBase64(const AFileName: string): string;
     procedure SendVideoToServer(const ServerID, Description, VideoBase64, InclusionDate: string);
-    procedure btnIncluirVideoClick(Sender: TObject);
-    procedure cbServersEnter(Sender: TObject);
-    procedure cbServersChange(Sender: TObject);
   private
     FServer: TIdHTTPWebBrokerBridge;
     procedure StartServer;
-    procedure LoadServersToComboBox(ComboBox: TComboBox);
   public
     { Public declarations }
   end;
@@ -74,22 +52,6 @@ begin
   ButtonStart.Enabled := not FServer.Active;
   ButtonStop.Enabled := FServer.Active;
   EditPort.Enabled := not FServer.Active;
-end;
-
-procedure TfrmPrincipalServer.btnIncluirVideoClick(Sender: TObject);
-var
-  VideoBase64: string;
-  dataAtual: TDateTime;
-  dataFormatada: string;
-begin
-  dataAtual := Now;
-  dataFormatada := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss', dataAtual);
-
-  if OpenDialog1.Execute then
-  begin
-    VideoBase64 := VideoToBase64(OpenDialog1.FileName);
-    SendVideoToServer(edtGUIDServer.Text, edtTituloVideo.Text, VideoBase64, dataFormatada);
-  end;
 end;
 
 procedure TfrmPrincipalServer.ButtonOpenBrowserClick(Sender: TObject);
@@ -125,27 +87,9 @@ begin
   FServer.Bindings.Clear;
 end;
 
-procedure TfrmPrincipalServer.cbServersChange(Sender: TObject);
-var
-  Servidor: TServer;
-begin
-  Servidor := TServerController.FindServerByName(cbServers.Text);
-  edtGUIDServer.Text := Servidor.ID.ToString;
-end;
-
-procedure TfrmPrincipalServer.cbServersEnter(Sender: TObject);
-begin
-  LoadServersToComboBox(cbServers);
-end;
-
 procedure TfrmPrincipalServer.FormCreate(Sender: TObject);
 begin
   FServer := TIdHTTPWebBrokerBridge.Create(Self);
-end;
-
-procedure TfrmPrincipalServer.LoadServersToComboBox(ComboBox: TComboBox);
-begin
-  TServerController.LoadServersToComboBox(ComboBox);
 end;
 
 procedure TfrmPrincipalServer.SendVideoToServer(const ServerID, Description, VideoBase64,

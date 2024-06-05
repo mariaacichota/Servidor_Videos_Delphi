@@ -1,0 +1,19 @@
+unit Server.Testes;
+
+interface
+
+uses
+  DUnitX.TestFramework;
+
+type
+  [TestFixture]
+  TTestesServidorDelphi = class
+  public
+  end;
+
+implementation
+
+initialization
+  TDUnitX.RegisterTestFixture(TTestesServidorDelphi);
+
+end.

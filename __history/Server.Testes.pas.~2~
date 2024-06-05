@@ -1,0 +1,34 @@
+unit Server.Testes;
+
+interface
+
+uses
+  DUnitX.TestFramework, ServerController, System.SysUtils;
+
+type
+  [TestFixture]
+  TTestServerVideoMonitoramento = class
+  public
+    [Test]
+    procedure TestFindServerByID;
+  end;
+
+implementation
+
+{ TTestServerVideoMonitoramento }
+
+procedure TTestServerVideoMonitoramento.TestFindServerByID;
+var
+  ServerID: TGUID;
+  Server: TServer;
+begin
+  ServerID := StringToGUID('{BF9EADEA-3F71-4008-97BD-A192AB797307}');
+  Server := TServerController.FindServerByID(ServerID);
+  Assert.IsNotNull(Server, 'Server should not be null');
+  Assert.AreEqual(ServerID, Server.ID, 'Server ID should match');
+end;
+
+initialization
+  TDUnitX.RegisterTestFixture(TTestServerVideoMonitoramento);
+
+end.
