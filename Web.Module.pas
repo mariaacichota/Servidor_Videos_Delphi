@@ -107,7 +107,7 @@ begin
     end
     else if Request.Method = 'POST' then
     begin
-      if (Request.PathInfo = '/api/servers/video') then
+      if ContainsText(Request.PathInfo, '/api/servers/') and ContainsText(Request.PathInfo, '/videos') then
         PostVideoToServer;
 
       if Request.PathInfo = '/api/server' then
@@ -470,36 +470,52 @@ var
   ServerID, VideoID: TGUID;
   Server: TServer;
   Video: TVideo;
-  VideoJSON: TJSONObject;
   URL: String;
   VideoStream: TStream;
 begin
   URL := Request.PathInfo;
 
   if GetIDsFromURL(URL, ServerID, VideoID) then
-  begin     
-  
-    Server := TServerController.FindServerByID(ServerID);     
+  begin
+    Server := TServerController.FindServerByID(ServerID);
     Video := TServerController.FindVideoByIDs(ServerID, VideoID);
 
     if Assigned(Video) and Assigned(Server) then
     begin
       VideoStream := TServerController.DownloadBinaryVideo(Video);
       try
-        Response.ContentType := 'application/octet-stream';
-        Response.StatusCode := 204;
-        Response.ContentStream := VideoStream;
-        Response.SetCustomHeader('Content-Disposition', 'attachment; filename="video.dat"');
-      finally
-
+        if VideoStream.Size > 0 then
+        begin
+          Response.ContentType := 'application/octet-stream';
+          Response.SetCustomHeader('Content-Disposition', 'attachment; filename="video.dat"');
+          Response.StatusCode := 200;
+          Response.ContentStream := VideoStream;
+        end
+        else
+        begin
+          VideoStream.Free;
+          Response.StatusCode := 500; // Internal Server Error
+          Response.Content := '{"error":"Internal Server Error: Binary stream is empty"}';
+        end;
+      except
+        on E: Exception do
+        begin
+          VideoStream.Free;
+          Response.StatusCode := 500; // Internal Server Error
+          Response.Content := Format('{"error":"%s"}', [E.Message]);
+        end;
       end;
     end
     else
     begin
       Response.StatusCode := 404; // Not Found
-      Response.Content := '{"error":"Video not found"}';
+      Response.Content := '{"error":"Video or Server not found"}';
     end;
-
+  end
+  else
+  begin
+    Response.StatusCode := 400; // Bad Request
+    Response.Content := '{"error":"Invalid URL format"}';
   end;
 end;
 

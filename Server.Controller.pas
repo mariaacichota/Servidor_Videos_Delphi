@@ -155,11 +155,21 @@ class function TServerController.DownloadBinaryVideo(Video: TVideo): TStream;
 begin
   Result := TMemoryStream.Create;
   try
-    Result.WriteBuffer(Video.Content[0], Length(Video.Content));
-    Result.Position := 0;
+    if Length(Video.Content) > 0 then
+    begin
+      Result.WriteBuffer(Video.Content[0], Length(Video.Content));
+      Result.Position := 0;
+    end
+    else
+    begin
+      raise Exception.Create('Video content is empty');
+    end;
   except
-    Result.Free;
-    raise;
+    on E: Exception do
+    begin
+      Result.Free;
+      raise Exception.Create('Error while creating video binary stream: ' + E.Message);
+    end;
   end;
 end;
 

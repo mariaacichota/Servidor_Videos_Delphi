@@ -12,7 +12,7 @@ type
 
   public
     class function CreateServer(AName, AIPAddress: string; AIPPort: Integer): TJSONObject;
-    class function CreateVideo(ServerID: TGUID; Description, Content: String; InclusionDate: TDateTime): TJSONObject;
+    class function CreateVideo(Server: TServer; Description, Content: String; InclusionDate: TDateTime): TJSONObject;
     class function UpdateServer(AID: TGUID; AName, AIPAddress: string; AIPPort: Integer): TJSONObject;
     class function DeleteServer(AID: TGUID): Boolean;
     class function DeleteVideo(ServerID, VideoID: TGUID): Boolean;
@@ -87,17 +87,19 @@ begin
   end;
 end;
 
-class function TServerController.CreateVideo(ServerID: TGUID; Description,
-  VideoBase64: String; InclusionDate: TDateTime): TJSONObject;
+class function TServerController.CreateVideo(Server: TServer; Description,
+  Content: String; InclusionDate: TDateTime): TJSONObject;
 var
   Video: TVideo;
-  Server: TServer;
 begin
+  if not Assigned(Server.VideoList) then
+    Server.VideoList := TObjectList<TVideo>.Create;
+
   Video := TVideo.Create;
   try
     Video.ID := TGUID.NewGuid;
     Video.Description := Description;
-    Video.Content := TNetEncoding.Base64.DecodeStringToBytes(VideoBase64);
+    Video.Content := TNetEncoding.Base64.DecodeStringToBytes(Content);
     Video.DataInclusao := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss', InclusionDate);
     Server.VideoList.Add(Video);
     Result := TJson.ObjectToJsonObject(Video);
@@ -153,8 +155,15 @@ class function TServerController.DownloadBinaryVideo(Video: TVideo): TStream;
 begin
   Result := TMemoryStream.Create;
   try
-    Result.WriteBuffer(Video.Content[0], Length(Video.Content));
-    Result.Position := 0;
+    if Length(Video.Content) > 0 then
+    begin
+      Result.WriteBuffer(Video.Content[0], Length(Video.Content));
+      Result.Position := 0;
+    end
+    else
+    begin
+      raise Exception.Create('Video content is empty');
+    end;
   except
     Result.Free;
     raise;

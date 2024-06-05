@@ -32,7 +32,7 @@ type
     procedure PostVideoToServer;
     procedure PostCreateServer;
     procedure PutUpdateServer;
-    procedure PostDownloadBinaryVideo;
+    procedure GetDownloadBinaryVideo;
     procedure DeleteServer;
     procedure DeleteVideo;
     procedure DeleteVideoRecyclerProcess;
@@ -93,27 +93,25 @@ begin
       if Request.PathInfo = '/api/servers' then
         GetAllServers;
 
-      //VERIFICAR
       if ContainsText(Request.PathInfo, '/api/servers/') and ContainsText(Request.PathInfo, '/videos/') then
           GetVideo;
 
-      //VERIFICAR
       if ContainsText(Request.PathInfo, '/api/servers/') and ContainsText(Request.PathInfo, '/videos') then
           GetAllVideos;
 
       if Request.PathInfo = '/api/recycler/status' then
           GetRecyclerStatus;
+
+      if ContainsText(Request.PathInfo, '/api/servers/') and ContainsText(Request.PathInfo, '/videos/') and ContainsText(Request.PathInfo, '/binary') then
+        GetDownloadBinaryVideo;
     end
     else if Request.Method = 'POST' then
     begin
       if (Request.PathInfo = '/api/servers/video') then
-        PostVideoToServer; // mudar
+        PostVideoToServer;
 
       if Request.PathInfo = '/api/server' then
         PostCreateServer;
-
-      if ContainsText(Request.PathInfo, '/api/servers/') and ContainsText(Request.PathInfo, '/videos/') and ContainsText(Request.PathInfo, '/binary') then
-        PostDownloadBinaryVideo;
     end
     else if Request.Method = 'PUT' then
     begin
@@ -125,7 +123,6 @@ begin
       if ContainsText(Request.PathInfo, '/api/servers/') and not ContainsText(Request.PathInfo, '/videos/') then
         DeleteServer;
 
-        // VERIFICAR
       if ContainsText(Request.PathInfo, '/api/servers/') and ContainsText(Request.PathInfo, '/videos/') then
         DeleteVideo;
 
@@ -468,7 +465,7 @@ begin
   Response.StatusCode := 201;
 end;
 
-procedure TWebModule1.PostDownloadBinaryVideo;
+procedure TWebModule1.GetDownloadBinaryVideo;
 var
   ServerID, VideoID: TGUID;
   Server: TServer;
@@ -480,15 +477,21 @@ begin
   URL := Request.PathInfo;
 
   if GetIDsFromURL(URL, ServerID, VideoID) then
-  begin     
-  
-    Server := TServerController.FindServerByID(ServerID);     
+  begin
+
+    Server := TServerController.FindServerByID(ServerID);
     Video := TServerController.FindVideoByIDs(ServerID, VideoID);
 
     if Assigned(Video) and Assigned(Server) then
     begin
       VideoStream := TServerController.DownloadBinaryVideo(Video);
-      Response.StatusCode := 204; // No Content (Sucess, no response needed)
+      if VideoStream.Size > 0 then
+      begin
+        Response.ContentType := 'application/octet-stream';
+        Response.SetCustomHeader('Content-Disposition', 'attachment; filename="video.dat"');
+        Response.StatusCode := 200;
+        Response.ContentStream := VideoStream;
+      end;
     end
     else
     begin
