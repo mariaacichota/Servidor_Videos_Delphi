@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"My Server 1\",\r\n  \"ip_address\": \"127.0.0.1\",\r\n  \"ip_port\": 8080\r\n}\r\n",
+					"raw": "{\r\n  \"name\": \"Servidor Video Postman\",\r\n  \"ip_address\": \"127.0.0.1\",\r\n  \"ip_port\": 8080\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,14 +21,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers",
+					"raw": "http://localhost:8080/api/server",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"servers"
+						"api",
+						"server"
 					]
 				}
 			},
@@ -49,13 +50,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}",
+					"raw": "http://localhost:8080/api/servers/{serverId}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}"
 					]
@@ -78,13 +80,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}",
+					"raw": "http://localhost:8080/api/servers/{serverId}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}"
 					]
@@ -98,13 +101,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}",
+					"raw": "http://localhost:8080/api/servers/{serverId}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}"
 					]
@@ -130,13 +134,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/available/{serverId}",
+					"raw": "http://localhost:8080/api/servers/available/{serverId}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"available",
 						"{serverId}"
@@ -163,13 +168,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers",
+					"raw": "http://localhost:8080/api/servers",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers"
 					]
 				}
@@ -183,7 +189,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\r\n    \"server_id\": \"{013486E6-FF25-44DA-9CCB-B0D9DBC0B9D0}\",\r\n    \"description\": \"My Test Video\",\r\n    \"content\": \"SGVsbG8sIFdvcmxkIQ==\",\r\n    \"inclusion_date\": \"2024-06-04T19:31:45\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -191,13 +197,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}/videos",
+					"raw": "http://localhost:8080/api/servers/{serverId}/videos",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}",
 						"videos"
@@ -221,13 +228,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}/videos/{videoId}",
+					"raw": "http://localhost:8080/api/servers/{serverId}/videos/{videoId}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}",
 						"videos",
@@ -255,13 +263,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}/videos/{videoId}",
+					"raw": "http://localhost:8080/api/servers/{serverId}/videos/{videoId}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}",
 						"videos",
@@ -273,8 +282,11 @@
 		},
 		{
 			"name": "Download do conteúdo binário de um vídeo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
@@ -286,13 +298,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}/videos/{videoId}/binary",
+					"raw": "http://localhost:8080/api/servers/{serverId}/videos/{videoId}/binary",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}",
 						"videos",
@@ -321,13 +334,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/servers/{serverId}/videos",
+					"raw": "http://localhost:8080/api/servers/{serverId}/videos",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"servers",
 						"{serverId}",
 						"videos"
@@ -351,13 +365,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/recycler/process/{days}",
+					"raw": "http://localhost:8080/api/recycler/process/{days}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"recycler",
 						"process",
 						"{days}"
@@ -384,13 +399,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/recycler/status",
+					"raw": "http://localhost:8080/api/recycler/status",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"recycler",
 						"status"
 					]
