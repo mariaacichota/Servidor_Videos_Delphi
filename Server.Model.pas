@@ -8,16 +8,16 @@ uses
 type
   TServer = class
   private
-    FID: TGUID;
-    FName: string;
-    FIPAddress: string;
-    FIPPort: Integer;
+    FId: TGUID;
+    FNome: string;
+    FIpAddress: string;
+    FIpPort: Integer;
     FVideoList: TObjectList<TVideo>;
   public
-    property ID: TGUID read FID write FID;
-    property Name: string read FName write FName;
-    property IPAddress: string read FIPAddress write FIPAddress;
-    property IPPort: Integer read FIPPort write FIPPort;
+    property Id: TGUID read FID write FId;
+    property Nome: string read FNome write FNome;
+    property IpAddress: string read FIpAddress write FIpAddress;
+    property IpPort: Integer read FIpPort write FIpPort;
     property VideoList: TObjectList<TVideo> read FVideoList write FVideoList;
   end;
 

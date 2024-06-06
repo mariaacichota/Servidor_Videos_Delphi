@@ -11,20 +11,20 @@ type
   TServerController = class(TComponent)
 
   public
-    class function CreateServer(AName, AIPAddress: string; AIPPort: Integer): TJSONObject;
-    class function CreateVideo(Server: TServer; Description, Content: String; InclusionDate: TDateTime): TJSONObject;
-    class function UpdateServer(AID: TGUID; AName, AIPAddress: string; AIPPort: Integer): TJSONObject;
-    class function DeleteServer(AID: TGUID): Boolean;
-    class function DeleteVideo(ServerID, VideoID: TGUID): Boolean;
-    class function GetServer(AID: TGUID): TJSONObject;
-    class function GetVideo(ServerID, VideoID: TGUID): TJSONObject;
-    class function CheckServerAvailability(AID: TGUID): Boolean;
+    class function CreateServer(nomeServidor, ipAddress: string; ipPort: Integer): TJSONObject;
+    class function CreateVideo(Server: TServer; descricao, conteudo: String; dataInclusao: TDateTime): TJSONObject;
+    class function UpdateServer(idServidor: TGUID; nomeServidor, ipAddress: string; ipPort: Integer): TJSONObject;
+    class function DeleteServer(idServidor: TGUID): Boolean;
+    class function DeleteVideo(idServidor, idVideo: TGUID): Boolean;
+    class function GetServer(idServidor: TGUID): TJSONObject;
+    class function GetVideo(idServidor, idVideo: TGUID): TJSONObject;
+    class function CheckServerAvailability(idServidor: TGUID): Boolean;
     class function GetAllServers: TJSONArray;
     class function GetAllVideos: TJSONArray;
     class function DownloadBinaryVideo(Video: TVideo): TStream;
 
-    class function FindServerByID(AID: TGUID): TServer;
-    class function FindVideoByIDs(ServerID, VideoID: TGUID): TVideo;
+    class function FindServerByID(idServidor: TGUID): TServer;
+    class function FindVideoByIDs(idServidor, idVideo: TGUID): TVideo;
   end;
 {$METHODINFO OFF}
 
@@ -35,13 +35,12 @@ uses
 
 { TServerController }
 
-class function TServerController.CheckServerAvailability(AID: TGUID): Boolean;
+class function TServerController.CheckServerAvailability(idServidor: TGUID): Boolean;
 var
   Servidor: TServer;
   TCPClient: TIdTCPClient;
 begin
-  // Encontrar o servidor com base no ID fornecido
-  Servidor := FindServerByID(AID);
+  Servidor := FindServerByID(idServidor);
   if Assigned(Servidor) then
   begin
     TCPClient := TIdTCPClient.Create(nil);
@@ -61,22 +60,21 @@ begin
   end
   else
   begin
-    // Se o servidor não for encontrado, retornar false
     Result := False;
   end;
 end;
 
-class function TServerController.CreateServer(AName, AIPAddress: string;
-  AIPPort: Integer): TJSONObject;
+class function TServerController.CreateServer(nomeServidor, ipAddress: string;
+  ipPort: Integer): TJSONObject;
 var
   Servidor: TServer;
 begin
   Servidor := TServer.Create;
   try
     Servidor.ID := TGUID.NewGuid;
-    Servidor.Name := AName;
-    Servidor.IPAddress := AIPAddress;
-    Servidor.IPPort := AIPPort;
+    Servidor.Nome := nomeServidor;
+    Servidor.IpAddress := ipAddress;
+    Servidor.IpPort := ipPort;
     ServerList.Add(Servidor);
     Result := TJson.ObjectToJsonObject(Servidor);
   except
@@ -85,8 +83,8 @@ begin
   end;
 end;
 
-class function TServerController.CreateVideo(Server: TServer; Description,
-  Content: String; InclusionDate: TDateTime): TJSONObject;
+class function TServerController.CreateVideo(Server: TServer; descricao,
+  conteudo: String; dataInclusao: TDateTime): TJSONObject;
 var
   Video: TVideo;
 begin
@@ -95,10 +93,10 @@ begin
 
   Video := TVideo.Create;
   try
-    Video.ID := TGUID.NewGuid;
-    Video.Description := Description;
-    Video.Content := TNetEncoding.Base64.DecodeStringToBytes(Content);
-    Video.DataInclusao := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss', InclusionDate);
+    Video.Id := TGUID.NewGuid;
+    Video.Descricao := descricao;
+    Video.Conteudo := TNetEncoding.Base64.DecodeStringToBytes(conteudo);
+    Video.DataInclusao := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss', dataInclusao);
     Server.VideoList.Add(Video);
     Result := TJson.ObjectToJsonObject(Video);
   except
@@ -107,13 +105,13 @@ begin
   end;
 end;
 
-class function TServerController.DeleteServer(AID: TGUID): Boolean;
+class function TServerController.DeleteServer(idServidor: TGUID): Boolean;
 var
   Servidor: TServer;
 begin
   for Servidor in ServerList do
   begin
-    if Servidor.ID = AID then
+    if Servidor.Id = idServidor then
     begin
       ServerList.Remove(Servidor);
       Servidor.Free;
@@ -124,18 +122,18 @@ begin
   Result := False;
 end;
 
-class function TServerController.DeleteVideo(ServerID, VideoID: TGUID): Boolean;
+class function TServerController.DeleteVideo(idServidor, idVideo: TGUID): Boolean;
 var
   Servidor: TServer;
   Video: TVideo;
 begin
   for Servidor in ServerList do
   begin
-    if Servidor.ID = ServerID then
+    if Servidor.Id = idServidor then
     begin
       for Video in Servidor.VideoList do
       begin
-        if Video.ID = VideoID then
+        if Video.Id = idVideo then
         begin
           Servidor.VideoList.Remove(Video);
           Result := True;
@@ -153,9 +151,9 @@ class function TServerController.DownloadBinaryVideo(Video: TVideo): TStream;
 begin
   Result := TMemoryStream.Create;
   try
-    if Length(Video.Content) > 0 then
+    if Length(Video.Conteudo) > 0 then
     begin
-      Result.WriteBuffer(Video.Content[0], Length(Video.Content));
+      Result.WriteBuffer(Video.Conteudo[0], Length(Video.Conteudo));
       Result.Position := 0;
     end
     else
@@ -171,7 +169,7 @@ begin
   end;
 end;
 
-class function TServerController.FindServerByID(AID: TGUID): TServer;
+class function TServerController.FindServerByID(idServidor: TGUID): TServer;
 var
   Servidor: TServer;
 begin
@@ -179,7 +177,7 @@ begin
 
   for Servidor in ServerList do
   begin
-    if Servidor.ID = AID then
+    if Servidor.Id = idServidor then
     begin
       Result := Servidor;
       Exit;
@@ -187,8 +185,7 @@ begin
   end;
 end;
 
-class function TServerController.FindVideoByIDs(ServerID,
-  VideoID: TGUID): TVideo;
+class function TServerController.FindVideoByIDs(idServidor, idVideo: TGUID): TVideo;
 var
   Servidor: TServer;
   Video: TVideo;
@@ -197,10 +194,10 @@ begin
 
   for Servidor in ServerList do
   begin
-    if Servidor.ID = ServerID then
+    if Servidor.Id = idServidor then
     begin
       for Video in Servidor.VideoList do
-        if Video.ID = VideoID then
+        if Video.Id = idVideo then
         begin
           Result := Video;
           Exit;
@@ -247,13 +244,13 @@ begin
   end;
 end;
 
-class function TServerController.GetServer(AID: TGUID): TJSONObject;
+class function TServerController.GetServer(idServidor: TGUID): TJSONObject;
 var
   Servidor: TServer;
 begin
   for Servidor in ServerList do
   begin
-    if Servidor.ID = AID then
+    if Servidor.Id = idServidor then
     begin
       Result := TJson.ObjectToJsonObject(Servidor);
       Exit;
@@ -262,17 +259,17 @@ begin
   Result := nil;
 end;
 
-class function TServerController.GetVideo(ServerID, VideoID: TGUID): TJSONObject;
+class function TServerController.GetVideo(idServidor, idVideo: TGUID): TJSONObject;
 var
   Servidor: TServer;
   Video: TVideo;
 begin
   for Servidor in ServerList do
   begin
-    if Servidor.ID = ServerID then
+    if Servidor.Id = idServidor then
     begin
       for Video in Servidor.VideoList do
-        if Video.ID = VideoID then
+        if Video.Id = idVideo then
         begin
           Result := TJson.ObjectToJsonObject(Video);
           Exit;
@@ -282,18 +279,18 @@ begin
   Result := nil;
 end;
 
-class function TServerController.UpdateServer(AID: TGUID; AName, AIPAddress: string;
-  AIPPort: Integer): TJSONObject;
+class function TServerController.UpdateServer(idServidor: TGUID; nomeServidor, ipAddress: string;
+  ipPort: Integer): TJSONObject;
 var
   Servidor: TServer;
 begin
   for Servidor in ServerList do
   begin
-    if Servidor.ID = AID then
+    if Servidor.Id = idServidor then
     begin
-      Servidor.Name := AName;
-      Servidor.IPAddress := AIPAddress;
-      Servidor.IPPort := AIPPort;
+      Servidor.Nome := nomeServidor;
+      Servidor.IpAddress := ipAddress;
+      Servidor.IpPort := ipPort;
       Result := TJson.ObjectToJsonObject(Servidor);
       Exit;
     end;

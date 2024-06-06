@@ -1,0 +1,35 @@
+unit Server.Model;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, System.Generics.Collections, Videos.Model;
+
+type
+  TServer = class
+  private
+    FId: TGUID;
+    FNome: string;
+    FIpAddress: string;
+    FIpPort: Integer;
+    FVideoList: TObjectList<TVideo>;
+  public
+    property Id: TGUID read FID write FID;
+    property Nome: string read FNome write FNome;
+    property IpAddress: string read FIpAddress write FIpAddress;
+    property IpPort: Integer read FIpPort write FIpPort;
+    property VideoList: TObjectList<TVideo> read FVideoList write FVideoList;
+  end;
+
+var
+  ServerList: TList<TServer>;
+
+implementation
+
+initialization
+  ServerList := TList<TServer>.Create;
+
+finalization
+  ServerList.Free;
+
+end.
