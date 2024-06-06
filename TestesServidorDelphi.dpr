@@ -10,39 +10,39 @@ uses
   DUnitX.Loggers.XML.JUnit,
   IdHTTPServer,
   IdSSLOpenSSL,
-  Server.Testes in 'Server.Testes.pas';
+  Server.Testes in 'Testes\Server.Testes.pas';
 
 var
   Server: TIdHTTPServer;
   Runner: ITestRunner;
   ConsoleLogger: TDUnitXConsoleLogger;
-  SSLHandler: TIdServerIOHandlerSSL;
+
+function CreateSSLHandler: TIdServerIOHandlerSSLOpenSSL;
+begin
+  Result := TIdServerIOHandlerSSLOpenSSL.Create(nil);
+  Result.SSLOptions.Method := sslvTLSv1_2;
+  Result.SSLOptions.Mode := sslmServer;
+end;
 
 begin
   try
     Writeln('Inicializando o servidor...');
     Server := TIdHTTPServer.Create(nil);
     try
-      SSLHandler := TIdServerIOHandlerSSL.Create(nil);
-      try
-        SSLHandler.SSLOptions.Method := sslvTLSv1_2;
-        SSLHandler.SSLOptions.Mode := sslmServer;
-        Server.IOHandler := SSLHandler;
-        Server.DefaultPort := 8080;
-        Server.Active := True;
-        Writeln('Servidor inicializado na porta 8080.');
+      Server.IOHandler := CreateSSLHandler;
 
-        Writeln('Criando o runner de testes...');
-        Runner := TDUnitX.CreateRunner;
-        ConsoleLogger := TDUnitXConsoleLogger.Create(true);
-        Runner.AddLogger(consoleLogger);
+      Server.DefaultPort := 8080;
+      Server.Active := True;
+      Writeln('Servidor inicializado na porta 8080.');
 
-        Writeln('Executando os testes...');
-        Runner.Execute;
-        Writeln('Testes concluídos.');
-      finally
-        SSLHandler.Free;
-      end;
+      Writeln('Criando o runner de testes...');
+      Runner := TDUnitX.CreateRunner;
+      ConsoleLogger := TDUnitXConsoleLogger.Create(true);
+      Runner.AddLogger(ConsoleLogger);
+
+      Writeln('Executando os testes...');
+      Runner.Execute;
+      Writeln('Testes concluídos.');
     finally
       Server.Free;
     end;
@@ -50,5 +50,6 @@ begin
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);
   end;
+
 end.
 

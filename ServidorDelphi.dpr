@@ -5,13 +5,12 @@ uses
   Vcl.Forms,
   Web.WebReq,
   IdHTTPWebBrokerBridge,
-  Server.View in 'Server.View.pas' {frmPrincipalServer},
-  Server.Controller in 'Server.Controller.pas',
   Server.Container in 'Server.Container.pas' {ServerContainer: TDataModule},
-  Web.Module in 'Web.Module.pas' {WebModule1: TWebModule},
+  Server.Controller in 'Server.Controller.pas',
   Server.Model in 'Server.Model.pas',
+  Server.View in 'Server.View.pas' {frmPrincipalServer},
   Videos.Model in 'Videos.Model.pas',
-  Server.Testes in 'Server.Testes.pas';
+  Web.Module in 'Web.Module.pas' {WebModule1: TWebModule};
 
 {$R *.res}
 

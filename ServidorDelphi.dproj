@@ -100,24 +100,23 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="Server.View.pas">
-            <Form>frmPrincipalServer</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="Server.Controller.pas"/>
         <DCCReference Include="Server.Container.pas">
             <Form>ServerContainer</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="Server.Controller.pas"/>
+        <DCCReference Include="Server.Model.pas"/>
+        <DCCReference Include="Server.View.pas">
+            <Form>frmPrincipalServer</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Videos.Model.pas"/>
         <DCCReference Include="Web.Module.pas">
             <Form>WebModule1</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Server.Model.pas"/>
-        <DCCReference Include="Videos.Model.pas"/>
-        <DCCReference Include="Server.Testes.pas"/>
         <None Include="js\base64.js"/>
         <None Include="js\serverfunctionexecutor.js"/>
         <None Include="js\json2.js"/>
